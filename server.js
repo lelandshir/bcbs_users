@@ -1,16 +1,14 @@
 require("dotenv").config();
-
 const express = require("express");
 const session = require("express-session");
-const bodyParser = require("body-parser");
-const passport = require("passport");
+const userController = require("./controllers/users.js");
 const auth = require("./auth");
-const userController = require("./controllers/users");
-
 const app = express();
 
 // Middleware
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -19,11 +17,26 @@ app.use(
   })
 );
 
-app.use(passport.initialize());
-app.use(passport.session());
+// Registration endpoint
+app.post("/register", auth.register);
 
-// User Controller Routes
-app.use("/users", userController);
+// Login endpoint
+app.post("/login", auth.login);
+
+// Logout endpoint
+app.get("/logout", auth.logout);
+
+// Note: Protected route
+app.get("/profile", auth.ensureAuthenticated, (req, res) => {
+  res.json(req.user);
+});
+
+// User CRUD routes
+app.get("/users/:id", userController.getUser);
+app.get("/users", userController.getUsers);
+app.put("/users/:id", userController.updateUser);
+app.delete("/users/:id", userController.deleteUser);
+app.post("/users", userController.createUser);
 
 // Server
 app.listen(3000, () => {

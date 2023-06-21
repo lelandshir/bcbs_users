@@ -42,7 +42,7 @@ const createUser = async (req, res) => {
   }
 };
 
-// Update a user
+// Update a user - not required but wrote this out
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -69,7 +69,7 @@ const deleteUser = async (req, res) => {
     res.send("User deleted successfully");
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error deleting user");
+    res.status(500).send("Error deleting the user");
   }
 };
 
